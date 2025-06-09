@@ -1,7 +1,8 @@
-import React, { useContext, useEffect, useState } from "react";
-import { DoctorContext } from "../context/DoctorContext";
+import { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import axios from "axios";
+
+import { DoctorContext } from "../context/DoctorContext";
+import { specialties } from "../assets/assets";
 
 const Doctors = () => {
   const { speciality } = useParams();
@@ -10,10 +11,10 @@ const Doctors = () => {
   const [showFilter, setShowFilter] = useState(false);
   const navigate = useNavigate();
 
-  const [doctors, setDoctors] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+  // const [doctors, setDoctors] = useState([]);
+  // const [isLoading, setIsLoading] = useState(false);
 
-  // const { doctors } = useContext(AppContext)
+  const { doctors } = useContext(DoctorContext);
 
   const applyFilter = () => {
     if (speciality) {
@@ -23,24 +24,25 @@ const Doctors = () => {
     }
   };
 
-  const fetchDoctors = async () => {
-    try {
-      const res = await axios.get(
-        "http://localhost:4000/api/doctor/list?speciality="
-      );
-      if (res.status === 200) {
-        setDoctors(res.data.data);
-        setFilterDoc(res.data.data)
-        setIsLoading(false);
-      }
-    } catch (error) {
-      console.error("Error fetching doctors:", error);
-      setIsLoading(false);
-    }
-  };
+  // const fetchDoctors = async () => {
+  //   try {
+  //     const res = await axios.get(
+  //       "http://localhost:4000/api/doctor/list?speciality="
+  //     );
+  //     if (res.status === 200) {
+  //       setDoctors(res.data.data);
+  //       setFilterDoc(res.data.data)
+  //       setIsLoading(false);
+  //     }
+  //   } catch (error) {
+  //     console.error("Error fetching doctors:", error);
+  //     setIsLoading(false);
+  //   }
+  // };
 
   useEffect(() => {
-    fetchDoctors();
+    // fetchDoctors();
+    setFilterDoc(doctors);
   }, []);
 
   useEffect(() => {
@@ -64,7 +66,24 @@ const Doctors = () => {
             showFilter ? "flex" : "hidden sm:flex"
           }`}
         >
-          <p
+          {specialties.map((specialityItem) => (
+            <p
+              onClick={() =>
+                speciality === specialityItem
+                  ? navigate("/doctors")
+                  : navigate(`/doctors/${specialityItem}`)
+              }
+              className={`w-[94vw] sm:w-auto pl-3 py-1.5 pr-16 border border-gray-300 rounded transition-all cursor-pointer ${
+                speciality === specialityItem
+                  ? "bg-[#E2E5FF] text-black "
+                  : ""
+              }`}
+            >
+              {specialityItem}
+            </p>
+          ))}
+
+          {/* <p
             onClick={() =>
               speciality === "General physician"
                 ? navigate("/doctors")
@@ -139,11 +158,10 @@ const Doctors = () => {
             }`}
           >
             Gastroenterologist
-          </p>
+          </p> */}
         </div>
+
         <div className="w-full grid grid-cols-auto gap-4 gap-y-6">
-
-
           {filterDoc?.map((item, index) => (
             <div
               onClick={() => {

@@ -24,6 +24,7 @@ const MyProfile = () => {
 
       if (data.success) {
         setUserData(data.userData);
+        console.log(data.userData)
       } else {
         toast.error(data.message);
       }
@@ -42,7 +43,9 @@ const MyProfile = () => {
     try {
       const formData = new FormData();
 
-      formData.append("name", userData.name);
+      formData.append("firstName", userData.firstName);
+      formData.append("lastName", userData.lastName);
+      // formData.append("name", userData.name);
       formData.append("phone", userData.phone);
       formData.append("address", JSON.stringify(userData.address));
       formData.append("gender", userData.gender);
@@ -98,18 +101,33 @@ const MyProfile = () => {
       )}
 
       {isEdit ? (
-        <input
-          className="bg-gray-50 text-3xl font-medium max-w-60"
-          type="text"
-          onChange={(e) =>
-            setUserData((prev) => ({ ...prev, name: e.target.value }))
-          }
-          value={userData.name}
-        />
+        <>
+          <input
+            className="bg-gray-50 text-3xl font-medium max-w-60"
+            type="text"
+            onChange={(e) =>
+              setUserData((prev) => ({ ...prev, firstName: e.target.value }))
+            }
+            value={userData.firstName}
+          />
+          <input
+            className="bg-gray-50 text-3xl font-medium max-w-60"
+            type="text"
+            onChange={(e) =>
+              setUserData((prev) => ({ ...prev, lastName: e.target.value }))
+            }
+            value={userData.lastName}
+          />
+        </>
       ) : (
-        <p className="font-medium text-3xl text-[#262626] mt-4">
-          {userData.name}
-        </p>
+        <>
+          <p className="font-medium text-3xl text-[#262626] mt-4">
+            {userData.firstName}
+          </p>
+          <p className="font-medium text-3xl text-[#262626] mt-4">
+            {userData.lastName}
+          </p>
+        </>
       )}
 
       <hr className="bg-[#ADADAD] h-[1px] border-none" />

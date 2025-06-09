@@ -1,6 +1,5 @@
-import React, { useContext, useEffect, useState } from "react";
+import  { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { DoctorContext } from "../context/DoctorContext";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { assets } from "../assets/assets";
@@ -9,7 +8,7 @@ import { AuthContext } from "../context/AuthContext";
 const MyAppointments = () => {
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
-  const { token } = useContext(AuthContext);
+  const { token , userId } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const [appointments, setAppointments] = useState([]);
@@ -54,11 +53,11 @@ const MyAppointments = () => {
   };
 
   // Function to cancel appointment Using API
-  const cancelAppointment = async (appointmentId) => {
+  const cancelAppointmentHandler = async (appointmentId) => {
     try {
       const { data } = await axios.post(
-        backendUrl + "/api/user/cancel-appointment",
-        { appointmentId },
+        backendUrl + "/api/appointments/cancel",
+        { appointmentId, userId },
         { headers: { token } }
       );
 
@@ -244,7 +243,7 @@ const MyAppointments = () => {
 
               {!item.cancelled && !item.isCompleted && (
                 <button
-                  onClick={() => cancelAppointment(item._id)}
+                  onClick={() => cancelAppointmentHandler(item._id)}
                   className="text-[#696969] sm:min-w-48 py-2 border rounded hover:bg-red-600 hover:text-white transition-all duration-300"
                 >
                   Cancel appointment

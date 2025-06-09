@@ -1,15 +1,22 @@
-import React, { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { DoctorContext } from "../context/DoctorContext";
-import { assets } from "../assets/assets";
 import RelatedDoctors from "../components/RelatedDoctors";
-import axios from "axios";
+
+import { DoctorContext } from "../context/DoctorContext";
+import { AuthContext } from "../context/AuthContext";
+
 import { toast } from "react-toastify";
+import axios from "axios";
+
+import { assets } from "../assets/assets";
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 const Appointment = () => {
   const { docId } = useParams();
-  const { doctors, currencySymbol, backendUrl, token, getDoctosData } =
-    useContext(DoctorContext);
+
+  const { doctors, fetchDoctors, currencySymbol } = useContext(DoctorContext);
+  const { token, userId } = useContext(AuthContext);
+
   const daysOfWeek = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
 
   const [docInfo, setDocInfo] = useState(false);
@@ -88,7 +95,7 @@ const Appointment = () => {
     }
   };
 
-  const bookAppointment = async () => {
+  const bookAppointmentHandler = async () => {
     if (!token) {
       toast.warning("Login to book appointment");
       return navigate("/login");
@@ -104,13 +111,13 @@ const Appointment = () => {
 
     try {
       const { data } = await axios.post(
-        backendUrl + "/api/user/book-appointment",
-        { docId, slotDate, slotTime },
-        { headers: { token } }
+        backendUrl + "/api/appointments/book",
+        { docId, slotDate, slotTime, userId  },
+        { headers: { Authorization: `Bearer ${token}` } }
       );
       if (data.success) {
         toast.success(data.message);
-        getDoctosData();
+        fetchDoctors();
         navigate("/my-appointments");
       } else {
         toast.error(data.message);
@@ -220,7 +227,7 @@ const Appointment = () => {
         </div>
 
         <button
-          onClick={bookAppointment}
+          onClick={bookAppointmentHandler}
           className="bg-primary text-white text-sm font-light px-20 py-3 rounded-full my-6"
         >
           Book an appointment

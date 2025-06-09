@@ -299,3 +299,22 @@ export const doctors = [
         }
     },
 ]
+
+
+export const specialties = [
+  "General Physician",
+  "Surgeon",
+  "Gynecologist",
+  "Dermatologist",
+  "Pediatrician",
+  "Neurologist",
+  "Gastroenterologist",
+  "Cardiologist",
+  "Urologist",
+  "Ophthalmologist",
+  "Psychiatrist",
+  "Endocrinologist",
+  "Oncologist",
+  "Radiologist",
+  "Pathologist"
+];
