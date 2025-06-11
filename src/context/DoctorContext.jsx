@@ -5,7 +5,7 @@ import axios from "axios";
 export const DoctorContext = createContext();
 
 const DoctorContextProvider = (props) => {
-  const currencySymbol = "$";
+  const currencySymbol = "EGP";
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
   const [doctors, setDoctors] = useState([]);

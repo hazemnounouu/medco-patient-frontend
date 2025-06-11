@@ -1,4 +1,4 @@
-import  { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -8,7 +8,7 @@ import { AuthContext } from "../context/AuthContext";
 const MyAppointments = () => {
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
-  const { token , userId } = useContext(AuthContext);
+  const { token, userId } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const [appointments, setAppointments] = useState([]);
@@ -55,11 +55,14 @@ const MyAppointments = () => {
   // Function to cancel appointment Using API
   const cancelAppointmentHandler = async (appointmentId) => {
     try {
-      const { data } = await axios.post(
+      const {data} = await axios.post(
         backendUrl + "/api/appointments/cancel",
         { appointmentId, userId },
-        { headers: { token } }
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
       );
+
 
       if (data.success) {
         toast.success(data.message);
@@ -168,7 +171,7 @@ const MyAppointments = () => {
             </div>
             <div className="flex-1 text-sm text-[#5E5E5E]">
               <p className="text-[#262626] text-base font-semibold">
-                Dr: {item.docData.name}
+                {item.docData.name}
               </p>
               <p>{item.docData.speciality}</p>
               <p className="text-[#464646] font-medium mt-1">Address:</p>

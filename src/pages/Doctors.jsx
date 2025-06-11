@@ -66,8 +66,9 @@ const Doctors = () => {
             showFilter ? "flex" : "hidden sm:flex"
           }`}
         >
-          {specialties.map((specialityItem) => (
+          {specialties.map((specialityItem,index) => (
             <p
+            key={index}
               onClick={() =>
                 speciality === specialityItem
                   ? navigate("/doctors")

@@ -16,6 +16,7 @@ const Appointment = () => {
 
   const { doctors, fetchDoctors, currencySymbol } = useContext(DoctorContext);
   const { token, userId } = useContext(AuthContext);
+  const [isLoading, setIsLoading] = useState(false);
 
   const daysOfWeek = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
 
@@ -95,26 +96,70 @@ const Appointment = () => {
     }
   };
 
+  // const bookAppointmentHandler = async () => {
+  //   if (!token) {
+  //     toast.warning("Login to book appointment");
+  //     return navigate("/login");
+  //   }
+
+  //   const date = docSlots[slotIndex][0].datetime;
+
+  //   let day = date.getDate();
+  //   let month = date.getMonth() + 1;
+  //   let year = date.getFullYear();
+
+  //   const slotDate = day + "_" + month + "_" + year;
+
+  //   try {
+  //     const { data } = await axios.post(
+  //       backendUrl + "/api/appointments/book",
+  //       { docId, slotDate, slotTime, userId  },
+  //       { headers: { Authorization: `Bearer ${token}` } }
+  //     );
+  //     if (data.success) {
+  //       toast.success(data.message);
+  //       fetchDoctors();
+  //       navigate("/my-appointments");
+  //     } else {
+  //       toast.error(data.message);
+  //     }
+  //   } catch (error) {
+  //     console.log(error);
+  //     toast.error(error.message);
+  //   }
+  // };
+
   const bookAppointmentHandler = async () => {
     if (!token) {
       toast.warning("Login to book appointment");
       return navigate("/login");
     }
 
-    const date = docSlots[slotIndex][0].datetime;
+    if (!slotTime) {
+      toast.error("Please select a time slot");
+      return;
+    }
+
+    const date = docSlots[slotIndex]?.[0]?.datetime;
+    if (!date) {
+      toast.error("No available slot selected");
+      return;
+    }
 
     let day = date.getDate();
     let month = date.getMonth() + 1;
     let year = date.getFullYear();
 
-    const slotDate = day + "_" + month + "_" + year;
+    const slotDate = `${day}_${month}_${year}`;
 
     try {
+      setIsLoading(true); // start loading
       const { data } = await axios.post(
-        backendUrl + "/api/appointments/book",
-        { docId, slotDate, slotTime, userId  },
+        `${backendUrl}/api/appointments/book`,
+        { docId, slotDate, slotTime, userId },
         { headers: { Authorization: `Bearer ${token}` } }
       );
+
       if (data.success) {
         toast.success(data.message);
         fetchDoctors();
@@ -123,8 +168,10 @@ const Appointment = () => {
         toast.error(data.message);
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
       toast.error(error.message);
+    } finally {
+      setIsLoading(false); // stop loading
     }
   };
 
@@ -181,8 +228,7 @@ const Appointment = () => {
           <p className="text-gray-600 font-medium mt-4">
             Appointment fee:{" "}
             <span className="text-gray-800">
-              {currencySymbol}
-              {docInfo.fees}
+              {currencySymbol} {docInfo.fees}
             </span>{" "}
           </p>
         </div>
@@ -228,9 +274,14 @@ const Appointment = () => {
 
         <button
           onClick={bookAppointmentHandler}
-          className="bg-primary text-white text-sm font-light px-20 py-3 rounded-full my-6"
+          disabled={isLoading}
+          className={`text-sm font-light px-20 py-3 rounded-full my-6 transition-colors ${
+            isLoading
+              ? "bg-gray-400 cursor-not-allowed"
+              : "bg-primary hover:bg-blue-700 text-white"
+          }`}
         >
-          Book an appointment
+          {isLoading ? "Booking..." : "Book an appointment"}
         </button>
       </div>
 
